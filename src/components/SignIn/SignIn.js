@@ -40,7 +40,7 @@ class SignIn extends React.Component {
                 })
         }
 
-        fetch('http://localhost:3001/signin', request)
+        fetch('https://shielded-peak-28417.herokuapp.com/signin', request)
         .then(resp => resp.json())
         .then(user => {
             if (user.id){

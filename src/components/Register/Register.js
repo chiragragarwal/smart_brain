@@ -45,7 +45,7 @@ class Register extends React.Component{
                 })
         }
 
-        fetch('http://localhost:3001/register', request)
+        fetch('https://shielded-peak-28417.herokuapp.com/register', request)
         .then(resp => resp.json())
         .then(user => {
             if(user.id){
