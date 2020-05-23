@@ -97,6 +97,10 @@ class App extends React.Component {
     // app.models.predict(Clarifai.COLOR_MODEL, 
     //                    this.state.imageUrl)
 
+    if (!this.state.input) {
+      alert("Please enter an image URL")
+  }
+
     const imgRequest = {
       method: 'put',
       headers: {'Content-Type': 'application/json'},
@@ -111,7 +115,12 @@ class App extends React.Component {
                 body: JSON.stringify({
                         input: this.state.input})
         })
-        .then(response => response.json())
+        .then(response => {
+                if (response.ok){
+                  return response.json();
+                }
+                throw new Error(response.json())
+              })
         .then(response => {
               // Increment the entry count if there's a response
               if (response) {
@@ -120,9 +129,9 @@ class App extends React.Component {
                 .then(entries => {
                     this.setState(Object.assign(this.state.user, {entries: entries}))
                       })
+
+                this.displayFaceBox(this.calculateFaceLocation(response))
               }
-              
-              this.displayFaceBox(this.calculateFaceLocation(response))
             })
         .catch(err => console.log(err))
   }
