@@ -12,7 +12,7 @@ import Register from './components/Register/Register';
 
 // Set the run_mode to be prod or dev. 
 // This will set the DATABASE URL for relevant components
-const run_mode = 'dev'
+const run_mode = 'prod'
 const DATABASE_URL = (run_mode === 'prod') ? 'https://shielded-peak-28417.herokuapp.com'
                                            : 'http://localhost:3001';
 
