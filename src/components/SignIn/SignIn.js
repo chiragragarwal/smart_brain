@@ -1,4 +1,5 @@
 import React from 'react';
+import {DATABASE_URL} from '../../App';
 
 class SignIn extends React.Component {
 
@@ -40,8 +41,15 @@ class SignIn extends React.Component {
                 })
         }
 
-        fetch('https://shielded-peak-28417.herokuapp.com/signin', request)
+        fetch(`${DATABASE_URL}/signin`, request)
         .then(resp => resp.json())
+        .then(resp => {
+            if (resp === "Invalid login credentials"){
+                alert("The email and password combination is invalid. Please try again.")
+                throw new Error(resp)
+            }
+            return resp
+        })
         .then(user => {
             if (user.id){
                 // console.log('SUCCESS')
@@ -49,6 +57,7 @@ class SignIn extends React.Component {
                 this.props.onRouteChange('home')
             }
         })
+        .catch(err => console.log(err))
     }
 
     render() {
