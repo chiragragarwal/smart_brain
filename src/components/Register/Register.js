@@ -1,4 +1,5 @@
 import React from 'react';
+import {DATABASE_URL} from '../../App';
 
 class Register extends React.Component{
     constructor(props) {
@@ -45,8 +46,16 @@ class Register extends React.Component{
                 })
         }
 
-        fetch('https://shielded-peak-28417.herokuapp.com/register', request)
+        fetch(`${DATABASE_URL}/register`, request)
         .then(resp => resp.json())
+        .then(resp => {
+            // Check if the email is already registered
+            if (resp === "Email already registered") {
+                alert("This email is already registered")
+                throw new Error(resp)
+            }
+            return resp
+        })
         .then(user => {
             if(user.id){
                 console.log('SUCCESS')
@@ -54,6 +63,7 @@ class Register extends React.Component{
                 this.props.onRouteChange('home')
             }
         })
+        .catch(err => console.log(err))
     }
 
     render(){
