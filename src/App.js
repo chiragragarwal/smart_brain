@@ -10,6 +10,12 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 
+// Set the run_mode to be prod or dev. 
+// This will set the DATABASE URL for relevant components
+const run_mode = 'dev'
+const DATABASE_URL = (run_mode === 'prod') ? 'https://shielded-peak-28417.herokuapp.com'
+                                           : 'http://localhost:3001';
+
 const particleOptions = { 
   particles: {
     number: {
@@ -45,7 +51,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-      fetch('https://shielded-peak-28417.herokuapp.com/')
+      fetch(DATABASE_URL)
       .then(resp => resp.json())
       .then(console.log)
   }
@@ -109,7 +115,7 @@ class App extends React.Component {
           })
     }
 
-    fetch('https://shielded-peak-28417.herokuapp.com/imageurl', {
+    fetch(`${DATABASE_URL}/imageurl`, {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -124,7 +130,7 @@ class App extends React.Component {
         .then(response => {
               // Increment the entry count if there's a response
               if (response) {
-                fetch('https://shielded-peak-28417.herokuapp.com/image', imgRequest)
+                fetch(`${DATABASE_URL}/image`, imgRequest)
                 .then(resp => resp.json())
                 .then(entries => {
                     this.setState(Object.assign(this.state.user, {entries: entries}))
@@ -180,3 +186,5 @@ class App extends React.Component {
 }
 
 export default App;
+
+export {DATABASE_URL};
