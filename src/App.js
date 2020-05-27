@@ -31,7 +31,7 @@ const particleOptions = {
 const initialState = {
     input: '',
     imageUrl: '',
-    box: {},
+    boxes: [],
     route: 'signin',
     isSignedIn: false,
     user: {
@@ -68,26 +68,33 @@ class App extends React.Component {
     })
   }
 
-  calculateFaceLocation = (data) => {
-    const bounding_box = data.outputs[0].data.regions[0].region_info.bounding_box
+  calculateFaceLocations = (data) => {
+      const input_image = document.getElementById("inputimage")
+      let boxes = []
 
-    const input_image = document.getElementById("inputimage")
-    const width = Number(input_image.width)
-    const height = Number(input_image.height)
-    console.log(width, height)
+      // Calculate the bounding box for each face and store it
+      data.outputs[0].data.regions.forEach(region => {
+        const bounding_box = region.region_info.bounding_box
+        const width = Number(input_image.width)
+        const height = Number(input_image.height)
+        console.log(width, height)
 
-    // Return the margins of face box edges from the image edge
-    return {
-      left_col: bounding_box.left_col * width,
-      right_col: width - (bounding_box.right_col * width),
-      top_row: bounding_box.top_row * height,
-      bottom_row: height - (bounding_box.bottom_row * height)
-    }
+        // Return the margins of face box edges from the image edge
+        // and append it to the boxes list
+        boxes.push({
+          left_col: bounding_box.left_col * width,
+          right_col: width - (bounding_box.right_col * width),
+          top_row: bounding_box.top_row * height,
+          bottom_row: height - (bounding_box.bottom_row * height)
+        })
+    })
+
+    return boxes
   }
 
-  displayFaceBox = (box) => {
-    console.log(box)
-    this.setState({box: box})
+  displayFaceBox = (boxes) => {
+    console.log(boxes)
+    this.setState({boxes: boxes})
   }
 
   onInputChange = (event) => {
@@ -136,7 +143,7 @@ class App extends React.Component {
                     this.setState(Object.assign(this.state.user, {entries: entries}))
                       })
 
-                this.displayFaceBox(this.calculateFaceLocation(response))
+                this.displayFaceBox(this.calculateFaceLocations(response))
               }
             })
         .catch(err => console.log(err))
@@ -169,7 +176,7 @@ class App extends React.Component {
                   onInputChange={this.onInputChange}
                   onButtonSubmit={this.onButtonSubmit}
                 />
-                <FaceRecognition imageUrl={this.state.imageUrl} box={this.state.box}/>
+                <FaceRecognition imageUrl={this.state.imageUrl} boxes={this.state.boxes}/>
               </div>
               :
             (
